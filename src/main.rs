@@ -9,6 +9,8 @@ fn main() -> std::io::Result<()> {
         Err(_r) => return Ok(()),
     };
 
+    print!(" ");
+
     match changes::analyze(&repo) {
         Ok(status) => print!("{}", status.to_string()),
         Err(e) => panic!("failed to analyze changes: {}", e),

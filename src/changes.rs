@@ -1,5 +1,3 @@
-use ansi_term::Color::*;
-
 pub fn analyze(repository: &git2::Repository) -> Result<Changes, git2::Error> {
     let mut options = git2::StatusOptions::new();
     options.include_untracked(true);
@@ -64,34 +62,58 @@ pub struct Changes {
     deletions: Option<usize>,
 }
 
+fn red(s: String) -> String {
+	format!("%F{{red}}{}%f", s)
+}
+
+fn green(s: String) -> String {
+	format!("%F{{green}}{}%f", s)
+}
+
+fn black(s: String) -> String {
+	format!("%F{{black}}{}%f", s)
+}
+
+fn blue(s: String) -> String {
+	format!("%F{{blue}}{}%f", s)
+}
+
+fn yellow(s: String) -> String {
+	format!("%F{{yellow}}{}%f", s)
+}
+
+fn magenta(s: String) -> String {
+	format!("%F{{magenta}}{}%f", s)
+}
+
 impl std::fmt::Display for Changes {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
             "{}{}{}{}{}{}{}{}",
             self.new_files
-                .map(|i| { format!("{}{}", i, Green.paint("N")) })
+                .map(|i| { format!("{}{}", i, green("N".to_string())) })
                 .unwrap_or_default(),
             self.modifications_staged
-                .map(|i| { format!("{}{}", i, Green.paint("M")) })
+                .map(|i| { format!("{}{}", i, green("M".to_string())) })
                 .unwrap_or_default(),
             self.renames_staged
-                .map(|i| { format!("{}{}", i, Green.paint("R")) })
+                .map(|i| { format!("{}{}", i, green("R".to_string())) })
                 .unwrap_or_default(),
             self.deletions_staged
-                .map(|i| { format!("{}{}", i, Green.paint("D")) })
+                .map(|i| { format!("{}{}", i, green("D".to_string())) })
                 .unwrap_or_default(),
             self.modifications
-                .map(|i| { format!("{}{}", i, Red.paint("M")) })
+                .map(|i| { format!("{}{}", i, red("M".to_string())) })
                 .unwrap_or_default(),
             self.renames
-                .map(|i| { format!("{}{}", i, Red.paint("R")) })
+                .map(|i| { format!("{}{}", i, red("R".to_string())) })
                 .unwrap_or_default(),
             self.deletions
-                .map(|i| { format!("{}{}", i, Red.paint("D")) })
+                .map(|i| { format!("{}{}", i, red("D".to_string())) })
                 .unwrap_or_default(),
             self.untracked
-                .map(|i| { format!("{}{}", i, Blue.paint("U")) })
+                .map(|i| { format!("{}{}", i, blue("U".to_string())) })
                 .unwrap_or_default()
         )
     }
@@ -127,7 +149,7 @@ mod tests {
         assert_eq!(c.untracked.expect("new files expected"), 1);
 
         let mut expected = "1".to_string();
-        expected.push_str(&Blue.paint("U").to_string());
+        expected.push_str(&blue("U".to_string()).to_string());
         assert_eq!(c.to_string(), expected);
 
         dir.close().expect("cannot close");
